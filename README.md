@@ -2,6 +2,8 @@
 
 In this project you take a baseline installation of a Linux server and prepare it to host a web applications. You will secure your server, install and configure a database server, and deploy an existing web applications onto it.
 
+Public IP: 18.223.48.31
+
 Project website
   * [http://18.223.48.31.xip.io] - added xip.io as Google OAuth longer works with a raw IP address
   * [http://ec2-18-223-48-31.us-east-2.compute.amazonaws.com]
