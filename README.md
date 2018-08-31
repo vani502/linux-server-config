@@ -33,11 +33,14 @@ Project website
 * Change the SSH port from 22 to 2200
 
   * Edit `/etc/ssh/sshd_config`
+
     ```
     sudo nano /etc/ssh/sshd_config
     ```
   * Change the `Port number` from `22` to `2200`
+
   * Restart SSH service
+
     ```
     sudo service ssh restart
     ```
@@ -140,34 +143,42 @@ Project website
 * Clone and setup Item Catalog project
 
   * Move to the /var/www directory
+
     ```
     cd /var/www
     ```
   * Create application directory
+
     ```
     sudo mkdir FlaskApp
     ```
   * Move inside this directory
+
     ```
     cd FlaskApp
     ```
   * Clone catalog application
+
     ```
     git clone https://github.com/vani502/catalog-application.git
     ```
   * Rename the project's name
+
     ```
     sudo mv ./catalog-application ./FlaskApp
     ```
   * Move inside this directory
+
     ```
     cd FlaskApp
     ```
   * Rename `project.py` to `__init__.py`
+
     ```
     sudo mv project.py __init__.py
     ```
   * Update `database_setup.py`, `__init__.py` and `lotsofitems.py`
+
     ```
     engine = create_engine('sqlite:///catalog.db')
     engine = create_engine('postgresql://catalog:PASSWORD@localhost/catalog')
@@ -175,13 +186,16 @@ Project website
 
 * Update Google OAuth client secrets file
   * Update `credentials` in [Google Cloud Platform](https://console.cloud.google.com/home/dashboard?project=catalog-application-213323)
+
     * Add urls to `Authorized JavaScript origins`
+
       ```
         http://18.223.48.31.xip.io
 
         http://ec2-18-223-48-31.us-east-2.compute.amazonaws.com
       ```
     * Add urls to `Authorized redirect URIs`
+
       ```
         http://18.223.48.31.xip.io/login
 
@@ -192,6 +206,7 @@ Project website
         http://ec2-18-223-48-31.us-east-2.compute.amazonaws.com/gconnect
       ```
   * Edit `redirect_uris` and `javascript_origins` with urls in the  `client_secrets.json` file
+
     ```
     sudo nano client_secrets.json
     ```
@@ -208,10 +223,12 @@ Project website
 * Configure and Enable Virtual Host
 
   * Create FlaskApp.conf file
+
     ```
     sudo nano /etc/apache2/sites-available/FlaskApp.conf
     ```
   * Add the following lines of code, save and close
+
     ```
     <VirtualHost *:80>
       ServerName http://18.223.48.31
@@ -233,6 +250,7 @@ Project website
     </VirtualHost>
     ```
   * Enable the virtual host
+
     ```
     sudo a2ensite FlaskApp.conf
     ```
