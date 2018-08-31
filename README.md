@@ -26,57 +26,62 @@ Project website
 ## Secure server
 
 * Update all currently installed packages
-```
-sudo apt-get update
-sudo apt-get upgrade
-```
+  ```
+  sudo apt-get update
+  sudo apt-get upgrade
+  ```
 * Change the SSH port from 22 to 2200
-  1. Edit /etc/ssh/sshd_configsudo
-    * nano /etc/ssh/sshd_config
-  2. Change the Port number from 22 to 2200
-  3. Restart SSH service
-    * sudo service ssh restart
+
+  * Edit `/etc/ssh/sshd_config`
+    ```
+    sudo nano /etc/ssh/sshd_config
+    ```
+  * Change the `Port number` from `22` to `2200`
+  * Restart SSH service
+    ```
+    sudo service ssh restart
+    ```
 
 
 * Configure the Uncomplicated Firewall (UFW) to only allow incoming connections for SSH (port 2200), HTTP (port 80), and NTP (port 123)
-```
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw allow 2200/tcp
-sudo ufw allow 80/tcp
-sudo ufw allow 123/udp
-sudo ufw enable
-sudo ufw status
-```
+  ```
+  sudo ufw default deny incoming
+  sudo ufw default allow outgoing
+  sudo ufw allow 2200/tcp
+  sudo ufw allow 80/tcp
+  sudo ufw allow 123/udp
+  sudo ufw enable
+  sudo ufw status
+  ```
 
 ## Give grader access
 
 * Create a new user account named `grader`
-```
-sudo adduser grader
-```
+  ```
+  sudo adduser grader
+  ```
 * Give `grader` `sudo` permissions
-```
-sudo nano /etc/sudoers.d/grader
-```
+  ```
+  sudo nano /etc/sudoers.d/grader
+  ```
 * Create an SSH key pair for `grader`
 
 * Generate key on local machine and save to ~/.ssh folder
-```
-ssh-keygen
-```
+  ```
+  ssh-keygen
+  ```
 * Deploy key
-```
-su - grader
-mkdir .ssh
-touch .ssh/authorized_keys
-nano .ssh/authorized_keys
-```
+  ```
+  su - grader
+  mkdir .ssh
+  touch .ssh/authorized_keys
+  nano .ssh/authorized_keys
+  ```
 * Set permissions
-```
-chmod 700 .ssh
-chmod 644 .ssh/authorized_keys
-```
+  ```
+  chmod 700 .ssh
+  chmod 644 .ssh/authorized_keys
+  ```
 * Restart SSH: `sudo service ssh restart`
 
 * Log in as `grader`
@@ -87,9 +92,9 @@ chmod 644 .ssh/authorized_keys
 ## Prepare to deploy project
 
 * Configure the local timezone to UTC
-```
-sudo dpkg-reconfigure tzdata
-```
+  ```
+  sudo dpkg-reconfigure tzdata
+  ```
 * Install and configure Apache to serve a Python mod_wsgi application
 
   * Install Apache `sudo apt-get install apache2`
@@ -107,20 +112,20 @@ sudo dpkg-reconfigure tzdata
   * Open PostgreSQL with `psql`
 
   * Create new catalog database and new user named catalog
-  ```
-  postgres=# CREATE DATABASE catalog;
-  postgres=# CREATE USER catalog;
-  ```
+    ```
+    postgres=# CREATE DATABASE catalog;
+    postgres=# CREATE USER catalog;
+    ```
 
   * Set password for user catalog
-  ```
-  postgres=# ALTER ROLE catalog WITH PASSWORD 'password';
-  ```
+    ```
+    postgres=# ALTER ROLE catalog WITH PASSWORD 'password';
+    ```
 
   * Provide user permission to catalog database
-  ```
-  postgres=# GRANT ALL PRIVILEGES ON DATABASE catalog TO catalog;
-  ```
+    ```
+    postgres=# GRANT ALL PRIVILEGES ON DATABASE catalog TO catalog;
+    ```
 
   * Quit PostgreSQL `postgres=# \q`
 
@@ -135,110 +140,110 @@ sudo dpkg-reconfigure tzdata
 * Clone and setup Item Catalog project
 
   * Move to the /var/www directory
-  ```
-  cd /var/www
-  ```
+    ```
+    cd /var/www
+    ```
   * Create application directory
-  ```
-  sudo mkdir FlaskApp
-  ```
+    ```
+    sudo mkdir FlaskApp
+    ```
   * Move inside this directory
-  ```
-  cd FlaskApp
-  ```
+    ```
+    cd FlaskApp
+    ```
   * Clone catalog application
-  ```
-  git clone https://github.com/vani502/catalog-application.git
-  ```
+    ```
+    git clone https://github.com/vani502/catalog-application.git
+    ```
   * Rename the project's name
-  ```
-  sudo mv ./catalog-application ./FlaskApp
-  ```
+    ```
+    sudo mv ./catalog-application ./FlaskApp
+    ```
   * Move inside this directory
-  ```
-  cd FlaskApp
-  ```
+    ```
+    cd FlaskApp
+    ```
   * Rename `project.py` to `__init__.py`
-  ```
-  sudo mv project.py __init__.py
-  ```
+    ```
+    sudo mv project.py __init__.py
+    ```
   * Update `database_setup.py`, `__init__.py` and `lotsofitems.py`
-  ```
-  engine = create_engine('sqlite:///catalog.db')
-  engine = create_engine('postgresql://catalog:PASSWORD@localhost/catalog')
-  ```
+    ```
+    engine = create_engine('sqlite:///catalog.db')
+    engine = create_engine('postgresql://catalog:PASSWORD@localhost/catalog')
+    ```
 
 * Update Google OAuth client secrets file
   * Update `credentials` in [Google Cloud Platform](https://console.cloud.google.com/home/dashboard?project=catalog-application-213323)
     * Add urls to `Authorized JavaScript origins`
-    ```
-      http://18.223.48.31.xip.io
+      ```
+        http://18.223.48.31.xip.io
 
-      http://ec2-18-223-48-31.us-east-2.compute.amazonaws.com
-    ```
+        http://ec2-18-223-48-31.us-east-2.compute.amazonaws.com
+      ```
     * Add urls to `Authorized redirect URIs`
-    ```
-      http://18.223.48.31.xip.io/login
+      ```
+        http://18.223.48.31.xip.io/login
 
-      http://18.223.48.31.xip.io/gconnect
+        http://18.223.48.31.xip.io/gconnect
 
-      http://ec2-18-223-48-31.us-east-2.compute.amazonaws.com/login
+        http://ec2-18-223-48-31.us-east-2.compute.amazonaws.com/login
 
-      http://ec2-18-223-48-31.us-east-2.compute.amazonaws.com/gconnect
-    ```
+        http://ec2-18-223-48-31.us-east-2.compute.amazonaws.com/gconnect
+      ```
   * Edit `redirect_uris` and `javascript_origins` with urls in the  `client_secrets.json` file
-  ```
-  sudo nano client_secrets.json
-  ```
+    ```
+    sudo nano client_secrets.json
+    ```
 
 
 * Install Flask and other dependencies
-```
-sudo apt-get install python-psycopg2 python-flask
-sudo apt-get install python-sqlalchemy python-pip
-sudo pip install oauth2client
-sudo pip install requests
-sudo pip install httplib2
-```
+  ```
+  sudo apt-get install python-psycopg2 python-flask
+  sudo apt-get install python-sqlalchemy python-pip
+  sudo pip install oauth2client
+  sudo pip install requests
+  sudo pip install httplib2
+  ```
 * Configure and Enable Virtual Host
 
   * Create FlaskApp.conf file
-  ```
-  sudo nano /etc/apache2/sites-available/FlaskApp.conf
-  ```
+    ```
+    sudo nano /etc/apache2/sites-available/FlaskApp.conf
+    ```
   * Add the following lines of code, save and close
-  ```
-  <VirtualHost *:80>
-    ServerName http://18.223.48.31
-    ServerAdmin admin@18.223.48.31.com
-    ServerAlias ec2-18-223-48-31.us-east-2.compute.amazonaws.com/
-    WSGIScriptAlias / /var/www/FlaskApp/flaskapp.wsgi
-		<Directory /var/www/FlaskApp/FlaskApp/>
-			Order allow,deny
-			Allow from all
-		</Directory>
-		Alias /static /var/www/FlaskApp/FlaskApp/static
-		<Directory /var/www/FlaskApp/FlaskApp/static/>
-			Order allow,deny
-			Allow from all
-		</Directory>
-		ErrorLog ${APACHE_LOG_DIR}/error.log
-		LogLevel warn
-		CustomLog ${APACHE_LOG_DIR}/access.log combined
-  </VirtualHost>
-  ```
+    ```
+    <VirtualHost *:80>
+      ServerName http://18.223.48.31
+      ServerAdmin admin@18.223.48.31.com
+      ServerAlias ec2-18-223-48-31.us-east-2.compute.amazonaws.com/
+      WSGIScriptAlias / /var/www/FlaskApp/flaskapp.wsgi
+  		<Directory /var/www/FlaskApp/FlaskApp/>
+  			Order allow,deny
+  			Allow from all
+  		</Directory>
+  		Alias /static /var/www/FlaskApp/FlaskApp/static
+  		<Directory /var/www/FlaskApp/FlaskApp/static/>
+  			Order allow,deny
+  			Allow from all
+  		</Directory>
+  		ErrorLog ${APACHE_LOG_DIR}/error.log
+  		LogLevel warn
+  		CustomLog ${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>
+    ```
   * Enable the virtual host
-  ```
-  sudo a2ensite FlaskApp.conf
-  ```
+    ```
+    sudo a2ensite FlaskApp.conf
+    ```
 
 * Create the .wsgi File
 
   * Create the .wsgi File under /var/www/FlaskApp
-  ```
-  cd /var/www/FlaskApp
-  sudo nano flaskapp.wsgi
-  ```
+    ```
+    cd /var/www/FlaskApp
+    sudo nano flaskapp.wsgi
+    ```
   * Add the following lines of code to the flaskapp.wsgi file
 
     ```
@@ -253,9 +258,9 @@ sudo pip install httplib2
     application.secret_key = 'Add your secret key'
     ```
 * Restart Apache
-```
-sudo service apache2 restart
-```
+  ```
+  sudo service apache2 restart
+  ```
 
 ## Resources
   * [https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys-on-ubuntu-1604]
